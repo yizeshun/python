@@ -1,0 +1,6 @@
+#语法
+  [expression for iter_val in iterable]
+  [expression for iter_val in iterable if cond_expr]
+#例子
+  [ i**2 for i in range(1,11)]
+  [ i**2 for i in range(1,11) if i >= 4 ]
