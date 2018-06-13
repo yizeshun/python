@@ -1,0 +1,16 @@
+@list_route(methods=["POST"])
+def upload(request):
+    #获取文件
+    file_data = request.FILES.get("file", None)
+    #创建临时目录
+    tmp_dir = '/tmp/demo'
+    if not os.path.exists(tmp_dir):
+        os.mkdir(tmp_dir)
+    tmp_back_file_path = os.path.join(tmp_dir, file_data.name)
+    tmp_back_file = open(tmp_back_file_path, "wb+")
+    if file_data.multiple_chunks():
+        for chunk in file_data.chunks():
+            tmp_back_file.write(chunk)
+    else:
+        tmp_back_file.write(file_data.read())
+    tmp_back_file.close()
