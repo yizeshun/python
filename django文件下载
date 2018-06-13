@@ -1,0 +1,20 @@
+@list_route(methods=['GET'])
+def download(request):
+    #需要下载的文件路径
+    file_path = 'demo/test.csv'
+    def file_iterator(fname, chunk_size=512):
+        with open(fname) as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+    if os.path.exists(file_path):
+        response = StreamingHttpResponse(file_iterator(file_path))
+        response["Content-Type"] = "application/actet-stream"
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(file_name.encode('gb2312'))
+        response['Set-Cookie'] = "fileDownload=true; path=/"  # 前端如果使用了插件就需要加上这一行
+        return response
+    else:
+        return HttpResponse(json.dumps({"error": "文件下载失败"}), status=400, content_type='text/json')
