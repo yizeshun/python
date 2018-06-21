@@ -15,4 +15,60 @@
   2.decode()是将其他编码转为unicode编码
   
 #乱码本质上是系统编码与所提供字符的编码不一致导致的
+
+#实例
+  在python中采用csv模块生成一个csv文件的方法如下：
+  #coding:utf-8
+  import csv 
+  def create_csv():
+      file_path = "C:/Users/dell/Desktop/test.csv"
+      field_list = ["测试列"]
+      data = [["中国"], ["美国"], ["日本"]]
+      print sys.getdefaultencoding()
+      with open(file_path, 'wb') as f:
+          writer = csv.writer(f, dialect='excel')
+          # 写入列名
+          writer.writerow(field_list)
+          help(writer.writerow)
+          # 写入每一行的数据
+          for row in data:
+              writer.writerow(row)
+          f.close()
+  以上方式生成的csv文件在excel中直接打开时，会出现乱码情况。原因是生成的csv文件中,中文采用
+  的utf-8的形式进行编码,而windows操作系统一般默认的编码为gbk,excel在读取csv文件时，如果不
+  确定文件的编码方式，会默认采用系统的编码方式来解码，所以出现了乱码问题。
+  
+#解决方案
+  第一种方案：手动更改文件编码，并给文件加上标记，指明该文件用的什么编码。
+  可以通过window自带的记事本打开csv文件，另存为任意一种文件编码。记事本在保存文件时，会默认在
+  文件头部加上BOM，标记该文件采用的编码格式。经过记事本另存为后，excel再打开该csv文件时，就会
+  通过BOM知道该文件的编码，进而采用该编码进行解码，乱码问题就会解决。
+  第二种方案：从源头解决，即生成csv文件时，在文件头部加上BOM，标记该文件的编码格式，这样excel
+  读取该文件时，就能通过BOM来决定究竟采用何种编码格式来解码，这样编码和解码就会用统一的格式，也
+  不会出现乱码问题
+  
+#程序解决方案
+  #coding:utf-8
+  import csv 
+  import codecs
+  def create_csv():
+      file_path = "C:/Users/dell/Desktop/test.csv"
+      field_list = ["测试列"]
+      data = [["中国"], ["美国"], ["日本"]]
+      print sys.getdefaultencoding()
+      with open(file_path, 'wb') as f:
+          f.write(codecs.BOM_UTF8)
+          writer = csv.writer(f, dialect='excel')
+          # 写入列名
+          writer.writerow(field_list)
+          help(writer.writerow)
+          # 写入每一行的数据
+          for row in data:
+              writer.writerow(row)
+          f.close()
+
+    
+    
+  
+  
   
