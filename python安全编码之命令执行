@@ -1,0 +1,30 @@
+# 不使用os.system, commands.getoutput,commands.getstatusoutput,os.popen*等函数
+  会存在安全隐患
+  1.python中以前执行命令常用的方式为os.system(cmd)和os.popen(cmd).readlines
+  其中第一个返回0代表执行成功，返回其他不成功。第二个可以返回命令执行结果,这两种
+  执行命令的方式都存在安全隐患，应该摒弃使用
+
+#推荐使用subprocess模块,shell参数的值设置为False
+
+#subprocess使用方法
+  1.对于直接一次性执行的命令，使用方式如下：
+    cmd = "ps -ef"
+    cmd_list = shlex.split(cmd)
+    ps_exmple = subprocess.Popen(cmd_list, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    rtn = ps_exmple.communicate()[0]
+    说明：
+        shlex用于将cmd按规范的命令行格式将命令行切割为list
+        stdin子进程标准输入
+        stdout子进程标准输出
+  2.对于一个子进程的输出作为另一个子进程的输入的命令,使用方式如下：
+    cmd = "ps -ef | grep condition"
+    拆分为:
+        cmd_1 = "ps -ef"
+        cmd_2 = "grep condition"
+        cmd_1_list = shlex.split(cmd_1)
+        cmd_2_list = shlex.split(cmd_2)
+        ps_1 = subprocess.Popen(cmd_1_list, stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        ps_2 = subprocess.Popen(cmd_2_lits, stdin=ps_1.stdout, stdout=subprocess.PIPE)
+        rtn = ps_2.communicate()[0]
+        说明：
+            ps_1的输出作为ps_2的输入
