@@ -1,0 +1,22 @@
+#coding:utf-8
+
+def test():
+	dataset = [
+		{"name": "name1", "value":23},
+		{"name": "name2", "value":232},
+		{"name": "name3", "value":128},
+		{"name": "name4", "value":20},
+		{"name": "name5", "value":25},
+	]
+	def sort_value(x,y):
+		if x["value"] > y["value"]:
+			return 1
+		elif x["value"] < y["value"]:
+			return -1
+		else:
+			return 0
+	sorted_data = sorted(dataset, sort_value)
+	print sorted_data
+
+if __name__ == "__main__":
+	test()
