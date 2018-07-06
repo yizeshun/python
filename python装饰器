@@ -1,0 +1,219 @@
+#装饰器用于在不改变原有函数的代码的情况下拓展函数的功能
+#一共有以下几种类型的装饰器
+#coding:utf-8
+
+# 对无参数函数装饰器
+def deco_demo(func):
+
+	def inner():
+		print "登录验证"
+		return func()
+	return inner
+
+# 对有参数函数的装饰器
+def deco_demo_1(func):
+
+	def inner(a):
+		print "登录验证"
+		return func(a)
+	return inner
+
+# 对参数个数不定函数的装饰器
+def deco_demo_2(func):
+
+	def inner(*args,**kwargs):
+		print "登录验证"
+		return func(*args,**kwargs)
+	return inner
+
+# 带参数的装饰器
+def deco_demo_3(args="deco_1"):
+
+	def deco_1(func):
+
+		def inner(*args, **kwargs):
+			print "登录验证"
+			return func(*args, **kwargs)
+		return inner
+
+	def deco_2(func):
+
+		def inner(*args, **kwargs):
+			print "函数执行完成"
+			return func(*args, **kwargs)
+		return inner
+
+	deco = None
+	if args == deco_1.__name__:
+		deco = deco_1
+	if args == deco_2.__name__:
+		deco = deco_2
+	return deco
+
+@deco_demo
+def fun1():
+	print "fun1 called"
+
+@deco_demo_1
+def fun2(a):
+	print "fun2 called--args--%s"%(a)
+
+@deco_demo_2
+def fun3(a,b,c):
+	print "fun3 called--args--%s,%s,%s"%(a,b,c)
+
+@deco_demo_3(args="deco_2")
+def fun4(a):
+	print "func4 called--args--%s"%(a)
+
+if __name__ == "__main__":
+	# fun1()
+	# fun2("a")
+	# fun3("a","b","c")
+	fun4("a")
+  
+#基于写web接口，每次需要对参数进行校验，故写了一个校验参数的装饰器
+#coding:utf-8
+
+def validate(*args,**kwargs):
+	"""
+		1.提供str和int型参数进行校验
+		2.(a,b)为a<x<b
+		3.[a,b]为x属于a或者b
+		4.自定义函数
+		5.对于int型,默认校验int
+		6.对于str型,默认校验str与特殊字符
+		7.参数形式(a=('int',(1,10)), b('str',condition))
+	"""
+	#获取装饰器参数
+	keywords = dict((k,kwargs[k]) for k in kwargs)
+
+	#转换参数
+	def convert_params(keywords,func_kword):
+		result = []
+		for k,v in keywords.items():
+			if k in func_kword:
+				item = {}
+				if v[0] == 'int':
+					item["type"] = "int"
+				elif v[0] in ['str', 'unicode']:
+					item["type"] = "str"
+				item["name"] = k
+				item["value"] = func_kword[k]
+				item["condition"] = v[1]
+				result.append(item)
+		return result
+
+	#校验所有的参数,有一个不通过校验则校验失败
+	def validate_params(params):
+		flag = True
+		try:
+			for item in params:
+				res,msg = validate_single(name=item["name"],value=item["value"],param_type=item["type"],condition=item["condition"])
+				if not res:
+					flag = False
+					return flag, msg
+			return flag, "校验通过"
+		except Exception,e:
+			return False,"校验失败"
+	
+	def validate_single(name=None,value=None,param_type=None,condition=None):
+
+		if callable(condition):
+			res,msg = condition(value)
+			if not res:
+				return False,"%s%s" % (name, msg)
+		if param_type == 'int':
+			if not basic_int(value): 
+					return False,"{name}必须为int类型".format(name=name)
+			if isinstance(condition,tuple):
+				if not basic_int_range(value,condition):
+					return False,"{name}超出界限".format(name=name)
+			if isinstance(condition,list):
+				if not basic_contain(value,list):
+					return False,"{name}不合法".format(name=name)
+		elif param_type == 'str':
+			if not basic_str(value):
+				return False,"{name}必须为字符串类型".format(name=name)
+			if basic_str_special_code(value):
+				return False,"{name}包含特殊字符".format(name=name)
+			if isinstance(condition,tuple):
+				if not basic_str_range(value,condition):
+					return False,"{name}长度超出界限".format(name=name)
+			if isinstance(condition,list):
+				if not basic_contain(value,condition):
+					return False,"{name}不合法".format(name=name)
+		return True,"校验通过"
+
+
+	#基础校验int
+	def basic_int(arg):
+		try:
+			int_arg = int(arg)
+			return True
+		except Exception as e:
+			return False
+
+	#基础校验int取值范围
+	def basic_int_range(value,arg_range):
+		if arg_range[0] < value < arg_range[1]:
+			return True
+		else:
+			return False
+
+	#基础校验字符串
+	def basic_str(arg):
+		return isinstance(arg,basestring)
+
+	#基础校验字符串长度
+	def basic_str_range(value,arg_range):
+		if arg_range[0] < len(value) < arg_range[1]:
+			return True
+		else:
+			return False
+
+	#基础校验特殊字符
+	def basic_str_special_code(value):
+		special_code = ["\\", '"', "\'", "%", "|", ":", "=", ";", "<", ">"]
+		for code in special_code:
+			if code in value:
+				return True
+		return False
+
+	#基础校验是否包含
+	def basic_contain(value,dataset):
+		if value in dataset:
+			return True
+		else:
+			return False
+
+	#装饰器
+	def deco(func):
+		
+		def inner(*args, **kwargs):
+			#执行校验
+			params = convert_params(keywords,kwargs)
+			res,msg = validate_params(params)
+			if not res:
+				return res,msg
+			return res,func(*args, **kwargs)
+		return inner
+	return deco
+
+#用法如下：
+#coding:utf-8
+from validator import validate
+
+def validate_fun(args):
+	if args > 10:
+		return True, "校验通过"
+	else:
+		return False, "参数必须大于10"
+
+@validate(a=('int',(1,10)),b=('str',["1","3","5"]),c=('int',validate_fun))
+def fun1(a=3,b="2",c=None):
+	print "parms---", a,b
+
+if __name__ == "__main__":
+	res,msg = fun1(a=2,b="5",c=9)
+	print res,msg
