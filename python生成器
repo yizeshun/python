@@ -1,0 +1,24 @@
+#coding:utf-8
+
+#python生成器,保存计算方法，需要的时候才会计算
+#创建方法:
+#1.列表生成式的[]改为()
+g = (x*x for x in range(10))
+#打印方式：
+#1.可以调用next()方法,每调用一次,生成一个
+#2.for循环迭代,generator对象属于可迭代对象
+for item in g:
+	print item
+#2.函数生成器,采用关键字yield,如果函数定义
+#中包含yield关键字,就是一个generator
+def fib(max):
+	n, a, b = 0, 0, 1
+	while n<max:
+		yield b
+		a, b = b, a+b
+		n = n+1
+#调用一次next(),执行一次，遇见yield中止,下次再
+#调用next(),从上次中止的yield开始执行。
+#一般也是用for循环来迭代
+for item in fib(6):
+	print item
