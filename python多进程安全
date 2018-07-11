@@ -1,0 +1,6 @@
+#多个进程同一时间修改同一个数据时，会出现不可预知的问题，称为进程不安全
+#解决方案:互斥锁
+加锁的目的是为了保证多个进程修改同一块数据时，同一时间只能有一个修改
+#coding:utf-8
+from multiprocessing import Process,Lock
+
