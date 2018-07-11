@@ -3,4 +3,35 @@
 加锁的目的是为了保证多个进程修改同一块数据时，同一时间只能有一个修改
 #coding:utf-8
 from multiprocessing import Process,Lock
+def child_process(arg):
+	"""子进程"""
+  #获取锁
+  arg.acquire()
+	print "子进程执行中---pid={0},ppid={1}".format(os.getpid(),os.getppid())
+	time.sleep(2)
+	print "子进程终结---pid={0}".format(os.getpid())
+  #释放锁
+  arg.release()
 
+def main():
+	"""主进程"""
+  #创建锁
+  lock = Lock()
+	print "cpu的核心数为{0}".format(cpu_count())
+	print "主进程执行中---pid={0}".format(os.getpid())
+	ps = []
+	#创建子进程实例
+	for i in range(2):
+    #将锁传入进程执行函数中
+		p = Process(target=child_process,name="child_process"+str(i),args=(lock))
+		ps.append(p)
+	#开启进程
+	for i in range(2):
+		ps[i].start()
+	#阻塞进程
+	for i in range(2):
+		ps[i].join()
+	print "主进程中止"
+
+if __name__ == "__main__":
+	main()
