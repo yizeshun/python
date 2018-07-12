@@ -1,0 +1,34 @@
+#coding:utf-8
+
+"""
+python实现多线程的几种方式
+"""
+"""
+方法一:threading模块,直接传入要运行的方法
+"""
+import threading
+import time
+
+def thread_run():
+	print "线程{0}启动".format(threading.current_thread().getName())
+	time.sleep(1)
+	print "线程{0}中止".format(threading.current_thread().getName())
+
+def main():
+	"""主线程"""
+	print "主线程执行中---线程名={0}".format(threading.current_thread().getName())
+	loop = 10
+	th = []
+	for i in range(loop):
+		thread = threading.Thread(target=thread_run,name="线程"+str(i))
+		th.append(thread)
+	#开启线程
+	for i in range(loop):
+		th[i].start()
+	#阻塞线程
+	for i in range(loop):
+		th[i].join()
+	print "主线程中止"
+
+if __name__ == "__main__":
+	main()
