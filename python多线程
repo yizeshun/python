@@ -32,3 +32,38 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
+"""
+方法二:threading模块, 派生Thread类，重写run方法
+"""
+import threading
+import time
+
+class myThread(threading.Thread):
+	"""自定义线程类"""
+	def __init__(self,name):
+		super(myThread,self).__init__()
+		self.name = name
+	def run(self):
+		print "线程{0}启动".format(self.name)
+		time.sleep(1)
+		print "线程{0}中止".format(self.name)
+
+def main():
+	"""主线程"""
+	print "主线程执行中---线程名={0}".format(threading.current_thread().getName())
+	loop = 10
+	th = []
+	for i in range(loop):
+		thread = myThread("线程"+str(i))
+		th.append(thread)
+	#开启线程
+	for i in range(loop):
+		th[i].start()
+	#阻塞线程
+	for i in range(loop):
+		th[i].join()
+	print "主线程中止"
+
+if __name__ == "__main__":
+	main()
