@@ -17,8 +17,8 @@ def fib(max):
 		yield b
 		a, b = b, a+b
 		n = n+1
-#调用一次next(),执行一次，遇见yield中止,下次再
-#调用next(),从上次中止的yield开始执行。
+#调用一次next(),执行一次，遇见yield中止,返回yield后面表达式的值，
+#下次再调用next(),从上次中止的yield处继续执行。
 #一般也是用for循环来迭代
 for item in fib(6):
 	print item
