@@ -1,0 +1,4 @@
+采用python模块ip_tools
+from ip_tools import v4, v4_utils, v6
+1.将ip段的start,end 通过模块中的函数转为long整形
+2.采用for 循环逐次加1，然后将long整形通过模块中的函数转为ip
