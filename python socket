@@ -1,0 +1,67 @@
+Socket_server.py
+from socket import *
+from time import ctime
+import threading
+HOST = ''
+PORT = 21567
+BUFSIZE = 1024
+ADDR = (HOST, PORT)
+def msgHandler(conn_socket, addr):
+	"""
+	对消息进行处理
+	"""
+	print "connected from :", addr
+	while True:
+		data = conn_socket.recv(BUFSIZE)
+		if not data:
+			break
+		conn_socket.send("[%s] %s"%(ctime(), data))
+	conn_socket.close()
+	print addr,"---closed"
+
+def main():
+	"""
+	tcpServerSocket Demo
+	"""
+	tcpSocket = socket(AF_INET, SOCK_STREAM)
+	tcpSocket.bind(ADDR)
+	tcpSocket.listen(5)
+	try:
+		while True:
+			print "waiting for connection..."
+			connSock, addr = tcpSocket.accept()
+			print connSock, addr
+			thread = threading.Thread(target=msgHandler,args=(connSock,addr))
+			thread.start()
+	except Exception,e:
+		tcpSocket.close()
+
+if __name__ == "__main__":
+		main()
+    
+Socket_client.py
+from socket import *
+HOST = "10.67.0.134"
+PORT = 21567
+BUFSIZE = 1024
+ADDR = (HOST, PORT)
+def main():
+	"""
+	tcpClientSocket Demo
+	"""
+	tcpSocket = socket(AF_INET, SOCK_STREAM)
+	tcpSocket.connect(ADDR)
+	while True:
+		data = raw_input("请输入信息:")
+		if not data:
+			break
+		tcpSocket.send(data)
+		data = tcpSocket.recv(BUFSIZE)
+		if not data:
+			break
+		print "from sever message:", (data)
+	tcpSocket.close()
+
+if __name__  == "__main__":
+	main()
+
