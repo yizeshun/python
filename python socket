@@ -41,7 +41,7 @@ if __name__ == "__main__":
     
 Socket_client.py
 from socket import *
-HOST = "10.67.0.134"
+HOST = "localhost"
 PORT = 21567
 BUFSIZE = 1024
 ADDR = (HOST, PORT)
