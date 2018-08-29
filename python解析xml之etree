@@ -1,0 +1,22 @@
+#etree提供了更人性化的API用来处理xml文件
+1.引入
+import xml.etree.ElementTree as ET
+2.获取根节点
+tree = ET.parse(path)
+root = tree.getroot()
+3.根据tag查找子节点
+  find() 返回查到的第一个元素
+  findall() 返回查到的所有元素的列表
+  iterfind() 返回查到的所有元素的生成器
+4.创建一个element
+child = ET.element("child") 创建一个tag为child的节点
+5.将节点插入到指定的父节点中
+root.append(child)
+6.获取\设置元素内容
+content = element.text
+element.text = value
+7.获取\设置元素属性值
+value = element.get("someattr")
+element.set("someattr",value)
+8.将修改重新写入文件
+tree.write(xmlpath, encoding="UTF-8", xml_declaration=True)
