@@ -22,3 +22,37 @@ def fib(max):
 #一般也是用for循环来迭代
 for item in fib(6):
 	print item
+	
+#next()和send()方法
+使用 send() 方法给生成器发送消息
+例子
+#coding:utf-8
+def sim_generator():
+	"""
+	简单的生成器
+	"""
+	print "1"
+	n1 = yield 100
+	print "2"
+	yield n1
+	print "3"
+	yield 300
+	
+sim_generator_obj = sim_generator()
+	  
+print next(sim_generator_obj)
+print sim_generator_obj.send(500)
+print next(sim_generator_obj)
+
+执行结果为：
+1
+100
+2
+500
+3
+300
+首先第一个next，生成器开始执行，打印1，遇到yield 100，程序挂起，
+将执行控制权和yield后面的表达式的值100返回给调用者
+然后执行了send()，恢复生成器的运行，并将发送的值赋给上次中断时 yield 表达式的执行结果，即n1
+继续向下执行，遇到yield挂起，并返回yield后面表达式的值，此时为500
+接着第三次调用next()，生成器继续执行
