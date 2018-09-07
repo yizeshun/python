@@ -1,0 +1,9 @@
+class A():
+  """
+  description
+  """
+  static_att = 5
+  def fun(self):
+    print "hello"
+    
+其中static_att 是静态属性,被类以及所有类的实例共享
