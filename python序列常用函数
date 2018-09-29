@@ -1,0 +1,17 @@
+#coding:utf-8
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+def main():
+    iter_data = [{"key":2,"value":3},{"key":4,"value":4},{"key":3,"value":5}]
+    #逆序访问的迭代器
+    reverse_data = reversed(iter_data)
+    #序列的max,min
+    print max(iter_data,key=lambda x: x["value"])
+    #序列排序
+    sorted_data = sorted(iter_data, key=lambda x:x["key"])
+    print sorted_data
+
+if __name__ == "__main__":
+    main()
