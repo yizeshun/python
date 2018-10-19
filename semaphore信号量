@@ -1,0 +1,33 @@
+semaphore是一个内置的计数器
+每当调用acquire()时，内置计数器-1
+每当调用release()时，内置计数器+1
+semaphore用于限制一个时间点内的线程数量
+import time
+import threading
+
+def foo():
+    time.sleep(2)   #程序休息2秒
+    print("ok",time.ctime())
+
+for i in range(20):
+    t1=threading.Thread(target=foo,args=()) #实例化一个线程
+    t1.start()  #启动线程
+    
+换成
+import time
+import threading
+
+s1=threading.Semaphore(5)   #添加一个计数器
+
+def foo():
+    s1.acquire()    #计数器获得锁
+    time.sleep(2)   #程序休眠2秒
+    print("ok",time.ctime())
+    s1.release()    #计数器释放锁
+
+
+for i in range(20):
+    t1=threading.Thread(target=foo,args=()) #创建线程
+    t1.start()  #启动线程   
+    
+    
