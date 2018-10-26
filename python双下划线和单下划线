@@ -1,0 +1,24 @@
+# coding:utf-8
+
+class A(object):
+
+	def _test(self):
+		print "this is _test"
+
+	def __test(self):
+		print "this is __test"
+
+def main():
+	A()._test()
+
+main()
+
+如上,运行结果会输出
+但是如果改为
+  A().__test()会报错，因为在python中约定
+  默认将__test()前面加上了_A__test,因此想
+  调用__test()得用如下方式调用
+    A()._A__test()
+  由此可以得出，__下划线的方法可以作为私有方法
+  防止用类的实例随意调用
+  
