@@ -1,0 +1,12 @@
+1.__call__方法
+通过在python类中加上__call__方法，允许该类的实例可以像函数一样被调用。
+__call__ 在那些类的实例经常改变状态的时候会非常有效
+class Entity:
+'''调用实体来改变实体的位置。'''
+  def __init__(self, size, x, y):
+    self.x, self.y = x, y
+    self.size = size
+
+  def __call__(self, x, y):
+    '''改变实体的位置'''
+    self.x, self.y = x, y
