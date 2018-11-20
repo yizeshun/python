@@ -1,0 +1,46 @@
+1.__init__
+  用于类的初始化
+2.__new__
+  先于__init__执行，初始化类的实例,并将该实例同相关参数传递给__init__
+3.__getattribute__
+  用于点运算符的拦截，实例.属性或者实例.方法都会触发__getattribute__的调用
+4.__getattr__
+  当实例获取不存在的属性时触发，这个不存在是说属性在self.__dict__中找不到
+5.__setattr__
+  当设置实例的属性时触发，默认的最终结果是将属性及其值以字典的形式存入self.__dict__中
+  
+说明：
+  python解释器在执行object.__func__之类的魔法函数时，会默认返回当前的实例
+  即使源码中我们看到魔法方法都是pass。
+  因此重写这些魔法方法的时候，最好在最后调用一下object对象的魔法方法，并返回
+
+#coding:utf-8
+class A(object):
+	
+	def __init__(self, *args, **kwargs):
+		self.name = "A"
+
+	def __new__(cls, *args, **kwargs):
+		print args, kwargs
+		return object.__new__(cls, *args, **kwargs)
+
+	def __getattribute__(self, item):
+		print ("get attr func", item)
+		return object.__getattribute__(self, item)
+		
+	def __getattr__(self, item):
+		raise AttributeError('没有这个属性')
+
+	def __setattr__(self, key, value):
+		return object.__setattr__(self, key, value)
+
+	def hello(self):
+		print "hello"
+		
+def main():
+	a = A("hahaa")
+	name = a.name
+	a.hello()
+
+if __name__ == "__main__":
+	main()
