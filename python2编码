@@ -1,20 +1,4 @@
 #常见的字符编码
-  1.为了处理英文字符，产生了ASCII码
-  2.为了处理中文字符，产生了GB2312
-  3.为了处理各国字符，产生了Unicode
-  4.为了提高Unicode存储和传输性能，产生了UTF-8，它是Unicode的一种实现形式
-  
-#python2中的默认字符编码
-  默认字符编码为ASCII码，因此在写py文件时，如果不指定字符编码为utf-8，写中文字符串时会报错
-  因为ASCII码中并没有对应的中文数字，这就是为什么py文件开头必须有个coding:utf-8的语句
-  
-#python中的字符串有str和unicode两种类型
-
-#encode()和decode()方法
-  1.encode()是将unicode编码转为其他编码
-  2.decode()是将其他编码转为unicode编码
-  
-#乱码本质上是系统编码与所提供字符的编码不一致导致的
 
 #实例
   在python中采用csv模块生成一个csv文件的方法如下：
