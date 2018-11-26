@@ -1,5 +1,3 @@
-#常见的字符编码
-
 #实例
   在python中采用csv模块生成一个csv文件的方法如下：
   #coding:utf-8
