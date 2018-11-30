@@ -1,0 +1,32 @@
+#python关闭线程推荐使用标志位
+在子线程中通过定时获取标志位来
+决定是否退出
+知识点threading模块的event()方法
+event = threading.event()
+event主要有四个方法
+ event.wait(timeout=None)：调用该方法的线程会被阻塞，如果设置了timeout参数，超时后，线程会停止阻塞继续执行
+ event.set()：将event的标志设置为True，调用wait方法的所有线程将被唤醒
+ event.clear()：将event的标志设置为False，调用wait方法的所有线程将被阻塞
+ event.isSet()：判断event的标志是否为True
+例子：
+#coding:utf-8
+
+import threading
+
+def childThread(event_flag):
+	while not event_flag.isSet():
+		print "childThread running"
+	print "childThread end"
+
+def main():
+	print "parentThread start"
+	event = threading.event()
+	thread = threading.Thread(target=childThread, args=(event,))
+	thread.start()
+	event.set()
+	print "parentThread end"
+
+if __name__ == "__main__":
+	main()
+在该例子中，子线程通过不断判断标志位来决定是否退出循环，也就是退出子线程
+而标志位的改变有主线程通过event.set()方法改变，event默认的标志位False
