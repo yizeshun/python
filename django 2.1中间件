@@ -1,0 +1,67 @@
+1.用法
+class MyMiddleware():
+    """
+    测试中间件
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+        print("__init__ MyMiddleware")
+
+    def __call__(self, request):
+
+        print ("MyMiddleware __call__ response before")
+        response = self.get_response(request)
+        print("MyMiddleware __call__ response later")
+        return response
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        print("MyMiddleware process_view------")
+
+    def process_exception(self, request):
+        print("MyMiddleware process_exception------")
+        
+class MyMiddleware2():
+    """
+    测试中间件2
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+        print("__init__ MyMiddleware2")
+
+    def __call__(self, request):
+
+        print ("MyMiddleware2 __call__ response before")
+        response = self.get_response(request)
+        print("MyMiddleware2 __call__ response later")
+        return response
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        print("MyMiddleware2 process_view------")
+
+    def process_exception(self, request):
+        print("MyMiddleware2 process_exception------")
+        
+setting配置顺序为:
+   MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'login.middleware_demo.MyMiddleware',
+    'login.middleware_demo.MyMiddleware2',
+]
+
+执行结果为:
+__init__ MyMiddleware2
+__init__ MyMiddleware
+MyMiddleware __call__ response before
+MyMiddleware2 __call__ response before
+MyMiddleware process_view------
+MyMiddleware2 process_view------
+aaaa
+MyMiddleware2 __call__ response later
+MyMiddleware __call__ response later
+其中aaa为视图函数的打印语句
